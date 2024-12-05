@@ -1,8 +1,31 @@
 <?php
+
+\defined('_JEXEC') or die;
+
+use Joomla\CMS\Extension\Service\Provider\Module;
+use Joomla\CMS\Extension\Service\Provider\ModuleDispatcherFactory;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
+
 /**
- * @package     ${NAMESPACE}
- * @subpackage
+ * The adminnotes module service provider.
  *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * @since  5.1.0
  */
+return new class () implements ServiceProviderInterface {
+	/**
+	 * Registers the service provider with a DI container.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  void
+	 *
+	 * @since   5.1.0
+	 */
+	public function register(Container $container)
+	{
+		$container->registerServiceProvider(new ModuleDispatcherFactory('\\Joomill\\Module\\Adminnotes'));
+
+		$container->registerServiceProvider(new Module());
+	}
+};
