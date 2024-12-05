@@ -1,15 +1,9 @@
 <?php
 /*
- *  package: Checklist
+ *  package: Admin Notes
  *  copyright: Copyright (c) 2024. Jeroen Moolenschot | Joomill
  *  license: GNU General Public License version 2 or later
  *  link: https://www.joomill-extensions.com
- *
- *  this project is based on DB8 Site Dev for Joomla 3
- *  package: Com_Db8SiteDev
- *  copyright: Copyright (c) 2016. Peter Martin | DB8
- *  license: GNU General Public License version 2 or later
- *  link: https://db8.eu/download/component/db8-site-dev
  */
 
 defined('_JEXEC') or die();
