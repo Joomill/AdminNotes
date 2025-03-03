@@ -21,7 +21,7 @@ class AdminnotesHelper
 
 	public static function canEdit($params)
 	{
-		$user    = Factory::getUser();
+		$user    = Factory::getApplication()->getIdentity();
 		$canEdit = false;
 
 		$params         = new Registry($params);
