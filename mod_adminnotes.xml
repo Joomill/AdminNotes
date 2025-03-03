@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="module" client="administrator" method="upgrade">
     <name>Joomill Admin Notes</name>
-    <creationDate>December 2024</creationDate>
+    <creationDate>January 2025</creationDate>
     <author>Jeroen Moolenschot | Joomill</author>
     <authorEmail>info@joomill-extensions.com</authorEmail>
     <authorUrl>https://www.joomill-extensions.com</authorUrl>
-    <copyright>2024 Joomill Extensions</copyright>
+    <copyright>2025 Joomill Extensions</copyright>
     <license>GNU General Public License version 2 or later;</license>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <description></description>
     <namespace path="src">Joomill\Module\Adminnotes</namespace>
 
@@ -45,6 +45,7 @@
                     label="MOD_ADMINNOTES_EDITOR"
                     description="MOD_ADMINNOTES_EDITOR_DESC"
                     folder="editors"
+                    default="tinymce"
                 >
                 </field>
                 <field
