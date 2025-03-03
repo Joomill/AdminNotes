@@ -69,7 +69,7 @@ class AdminnotesHelper
 	 */
 	public static function getData($moduleId)
 	{
-		$db    = Factory::getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');;
 		$query = $db->getQuery(true)
 			->select($db->quoteName('content'))
 			->from($db->quoteName('#__modules'))
@@ -89,7 +89,7 @@ class AdminnotesHelper
 	 */
 	public static function saveData($moduleId, $data)
 	{
-		$db    = Factory::getDbo();
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true)
 			->update($db->quoteName('#__modules'))
 			->set($db->quoteName('content') . ' = ' . $db->quote($data))
