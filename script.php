@@ -83,11 +83,13 @@ class Mod_AdminnotesInstallerScript
 			echo '<hr>';
 			echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_INSTALL_FOLLOWME') . ':</div>';
 			echo '<div class="text-center">';
-			echo '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"></i> </i></a>';
-			echo '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-brands fa-x-twitter"> </i></a>';
+			echo '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>';
 			echo '<a class="m-2" href="https://www.facebook.com/Joomill" target="_blank"><i class="fa-brands fa-facebook-f"> </i></a>';
 			echo '<a class="m-2" href="https://www.instagram.com/Joomill" target="_blank"><i class="fa-brands fa-instagram"> </i></a>';
-			echo '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>';
+			echo '<a class="m-2" href="https://bsky.app/profile/joomill.bsky.social" target="_blank"><i class="fa-brands fa-bluesky"> </i></a>';
+			echo '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"></i> </i></a>';
+			echo '<a class="m-2" href="https://www.threads.net/@joomill" target="_blank"><i class="fa-brands fa-threads"></i> </i></a>';
+			echo '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-brands fa-x-twitter"> </i></a>';
 			echo '<a class="m-2" href="https://community.joomla.org/service-providers-directory/listings/67:joomill.html" target="_blank"><i class="fa-brands fa-joomla"> </i></a>';
 			echo '</div>';
 		}
@@ -100,11 +102,13 @@ class Mod_AdminnotesInstallerScript
 			echo '<br>';
 			echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_INSTALL_FOLLOWME') . ':</div>';
 			echo '<div class="text-center">';
-			echo '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"></i> </i></a>';
-			echo '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-brands fa-x-twitter"> </i></a>';
+			echo '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>';
 			echo '<a class="m-2" href="https://www.facebook.com/Joomill" target="_blank"><i class="fa-brands fa-facebook-f"> </i></a>';
 			echo '<a class="m-2" href="https://www.instagram.com/Joomill" target="_blank"><i class="fa-brands fa-instagram"> </i></a>';
-			echo '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>';
+			echo '<a class="m-2" href="https://bsky.app/profile/joomill.bsky.social" target="_blank"><i class="fa-brands fa-bluesky"> </i></a>';
+			echo '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"></i> </i></a>';
+			echo '<a class="m-2" href="https://www.threads.net/@joomill" target="_blank"><i class="fa-brands fa-threads"></i> </i></a>';
+			echo '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-brands fa-x-twitter"> </i></a>';
 			echo '<a class="m-2" href="https://community.joomla.org/service-providers-directory/listings/67:joomill.html" target="_blank"><i class="fa-brands fa-joomla"> </i></a>';
 			echo '</div>';
 		}
@@ -142,7 +146,7 @@ class Mod_AdminnotesInstallerScript
 				$db->quoteName('position') . ' = ' . $db->quote('cpanel'),
 				$db->quoteName('access') . ' = 3',
 				$db->quoteName('params') . ' = ' .
-				$db->quote('{"edit_users":"","forceEditor":"1","print":"1","download":"1","header_icon":"fa-regular fa-note-sticky","module_tag":"div","bootstrap_size":"0","header_tag":"h2","header_class":"","style":"0"}'),
+				$db->quote('{"edit_users":"","editor":"tinymce","forceEditor":"1","print":"1","download":"1","header_icon":"fa-regular fa-note-sticky","module_tag":"div","bootstrap_size":"0","header_tag":"h2","header_class":"","style":"0"}'),
 			);
 			$conditions = array($db->quoteName('module') . ' = ' . $db->quote('mod_adminnotes'));
 			$query->update($db->quoteName('#__modules'))->set($fields)->where($conditions);
