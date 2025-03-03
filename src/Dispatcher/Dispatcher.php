@@ -9,8 +9,6 @@
 namespace Joomill\Module\Adminnotes\Administrator\Dispatcher;
 
 use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Plugin\PluginHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -33,6 +31,7 @@ class Dispatcher extends AbstractModuleDispatcher
 	protected function getLayoutData()
 	{
 		$data = parent::getLayoutData();
+
 		return $data;
 	}
 }

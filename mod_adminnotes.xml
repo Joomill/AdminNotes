@@ -27,78 +27,80 @@
         <fields name="params">
             <fieldset name="basic">
                 <field
-                    name="edit_user_groups"
-                    type="usergrouplist"
-                    label="MOD_ADMINNOTES_EDIT_USERGROUPS"
-                    description="MOD_ADMINNOTES_EDIT_USERGROUPS_DESC"
-                    multiple="true"
+                        name="edit_user_groups"
+                        type="usergrouplist"
+                        label="MOD_ADMINNOTES_EDIT_USERGROUPS"
+                        description="MOD_ADMINNOTES_EDIT_USERGROUPS_DESC"
+                        multiple="true"
                 />
                 <field
-                    name="edit_users"
-                    type="user"
-                    label="MOD_ADMINNOTES_EDIT_USERS"
-                    description="MOD_ADMINNOTES_EDIT_USERS_DESC"
+                        name="edit_users"
+                        type="user"
+                        label="MOD_ADMINNOTES_EDIT_USERS"
+                        description="MOD_ADMINNOTES_EDIT_USERS_DESC"
                 />
                 <field
-                    name="editor"
-                    type="plugins"
-                    label="MOD_ADMINNOTES_EDITOR"
-                    description="MOD_ADMINNOTES_EDITOR_DESC"
-                    folder="editors"
-                    default="tinymce"
+                        name="editor"
+                        type="plugins"
+                        label="MOD_ADMINNOTES_EDITOR"
+                        description="MOD_ADMINNOTES_EDITOR_DESC"
+                        folder="editors"
+                        default="tinymce"
                 >
                 </field>
                 <field
-                    name="forceEditor"
-                    type="radio"
-                    class="btn-group"
-                    label="MOD_ADMINNOTES_FORCEEDITOR"
-                    description="MOD_ADMINNOTES_FORCEEDITOR_DESC"
-                    default="1"
-                    >
+                        name="forceEditor"
+                        type="radio"
+                        class="btn-group"
+                        label="MOD_ADMINNOTES_FORCEEDITOR"
+                        description="MOD_ADMINNOTES_FORCEEDITOR_DESC"
+                        default="1"
+                >
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
                 <field
-                    name="print"
-                    type="radio"
-                    class="btn-group"
-                    label="MOD_ADMINNOTES_PRINT"
-                    description="MOD_ADMINNOTES_PRINT_DESC"
-                    default="1"
-                    >
+                        name="print"
+                        type="radio"
+                        class="btn-group"
+                        label="MOD_ADMINNOTES_PRINT"
+                        description="MOD_ADMINNOTES_PRINT_DESC"
+                        default="1"
+                >
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
                 <field
-                    name="download"
-                    type="radio"
-                    class="btn-group"
-                    label="MOD_ADMINNOTES_DOWNLOAD"
-                    description="MOD_ADMINNOTES_DOWNLOAD_DESC"
-                    default="1"
-                    >
+                        name="download"
+                        type="radio"
+                        class="btn-group"
+                        label="MOD_ADMINNOTES_DOWNLOAD"
+                        description="MOD_ADMINNOTES_DOWNLOAD_DESC"
+                        default="1"
+                >
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
             </fieldset>
             <fieldset name="advanced">
                 <field
-                    name="header_icon"
-                    type="text"
-                    label="MOD_ADMINNOTES_HEADER_ICON"
-                    default="fa-regular fa-note-sticky"
+                        name="header_icon"
+                        type="text"
+                        label="MOD_ADMINNOTES_HEADER_ICON"
+                        default="fa-regular fa-note-sticky"
                 />
             </fieldset>
         </fields>
     </config>
 
     <!-- Changelog -->
-    <changelogurl><![CDATA[https://www.joomill-extensions.com/index.php?option=com_ochsubscriptions&amp;view=changelog&amp;format=xml&amp;cat=22]]></changelogurl>
+    <changelogurl>
+        <![CDATA[https://www.joomill-extensions.com/index.php?option=com_ochsubscriptions&amp;view=changelog&amp;format=xml&amp;cat=22]]></changelogurl>
 
     <!-- Updateserver -->
     <updateservers>
-        <server type="extension" priority="1" name="Joomill Admin Notes"><![CDATA[https://www.joomill-extensions.com/index.php?option=com_ochsubscriptions&amp;view=updater&amp;format=xml&amp;cat=22]]></server>
+        <server type="extension" priority="1" name="Joomill Admin Notes">
+            <![CDATA[https://www.joomill-extensions.com/index.php?option=com_ochsubscriptions&amp;view=updater&amp;format=xml&amp;cat=22]]></server>
     </updateservers>
 
 </extension>
