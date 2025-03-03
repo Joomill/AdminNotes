@@ -50,7 +50,7 @@ $canPrint = $params->get('print',0, 'INT');
 $canDownload = $params->get('download',0, 'INT');
 
 $config = Factory::getConfig();
-$editor = Editor::getInstance($params->get('editor', Factory::getConfig()->get('editor'), 'STRING'));
+$editor = Editor::getInstance($params->get('editor', 'tinymce', 'STRING'));
 
 if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) {
 	if (!Session::checkToken('post')) {
