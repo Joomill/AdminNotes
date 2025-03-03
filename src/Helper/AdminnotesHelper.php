@@ -69,7 +69,7 @@ class AdminnotesHelper
 	 */
 	public static function getData($moduleId)
 	{
-		$db    = Factory::getContainer()->get('DatabaseDriver');;
+		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true)
 			->select($db->quoteName('content'))
 			->from($db->quoteName('#__modules'))
