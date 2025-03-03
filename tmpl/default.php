@@ -55,7 +55,7 @@ $canEdit     = AdminnotesHelper::canEdit($params);
 $canPrint    = $params->get('print', 0, 'INT');
 $canDownload = $params->get('download', 0, 'INT');
 
-$config = Factory::getConfig();
+$config = $app->getConfig();
 $editor = Editor::getInstance($params->get('editor', 'tinymce', 'STRING'));
 
 if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit)
