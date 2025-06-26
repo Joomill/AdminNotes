@@ -10,7 +10,9 @@ namespace Joomill\Module\Adminnotes\Administrator\Helper;
 
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Exception;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
