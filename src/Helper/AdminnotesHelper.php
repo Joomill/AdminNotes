@@ -20,82 +20,76 @@ use Joomla\Registry\Registry;
 class AdminnotesHelper
 {
 
-	public static function canEdit($params)
-	{
-		$user    = Factory::getApplication()->getIdentity();
-		$canEdit = false;
+    public static function canEdit($params)
+    {
+        $user = Factory::getApplication()->getIdentity();
+        $canEdit = false;
 
-		$params         = new Registry($params);
-		$editUserGroups = $params->get('edit_user_groups', []);
-		$editUsers      = $params->get('edit_users');
+        $params = new Registry($params);
+        $editUserGroups = $params->get('edit_user_groups', []);
+        $editUsers = $params->get('edit_users');
 
-		if ((!$editUserGroups) && (!$editUsers))
-		{
-			$canEdit = true;
-		}
+        if ((!$editUserGroups) && (!$editUsers)) {
+            $canEdit = true;
+        }
 
-		if (!is_array($editUserGroups))
-		{
-			$editUserGroups = array_filter(explode(',', $editUserGroups));
-		}
+        if (!is_array($editUserGroups)) {
+            $editUserGroups = array_filter(explode(',', $editUserGroups));
+        }
 
-		// Check if user is in allowed groups
-		if (!empty($editUserGroups))
-		{
-			foreach ($editUserGroups as $groupId)
-			{
-				if (in_array((int) $groupId, $user->groups))
-				{
-					$canEdit = true;
-					break;
-				}
-			}
-		}
+        // Check if user is in allowed groups
+        if (!empty($editUserGroups)) {
+            foreach ($editUserGroups as $groupId) {
+                if (in_array((int)$groupId, $user->groups)) {
+                    $canEdit = true;
+                    break;
+                }
+            }
+        }
 
-		// Check if user is in allowed users
-		if ($user->id == $editUsers)
-		{
-			$canEdit = true;
-		}
+        // Check if user is in allowed users
+        if ($user->id == $editUsers) {
+            $canEdit = true;
+        }
 
-		return $canEdit;
-	}
+        return $canEdit;
+    }
 
-	/**
-	 * Retrieves the content of a module from the database based on its ID.
-	 *
-	 * @param   int  $moduleId  The ID of the module to retrieve the content from.
-	 *
-	 * @return string|null The content of the module, or null if no module with the given ID exists.
-	 */
-	public static function getData($moduleId)
-	{
-		$db    = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true)
-			->select($db->quoteName('content'))
-			->from($db->quoteName('#__modules'))
-			->where($db->quoteName('id') . ' = ' . (int) $moduleId);
-		$db->setQuery($query);
+    /**
+     * Retrieves the content of a module from the database based on its ID.
+     *
+     * @param int $moduleId The ID of the module to retrieve the content from.
+     *
+     * @return string|null The content of the module, or null if no module with the given ID exists.
+     */
+    public static function getData($moduleId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('content'))
+            ->from($db->quoteName('#__modules'))
+            ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
+        $db->setQuery($query);
 
-		return $db->loadResult();
-	}
+        return $db->loadResult();
+    }
 
-	/**
-	 * Saves the given data to the module with the specified ID in the database.
-	 *
-	 * @param   int    $moduleId  The ID of the module to save the data to.
-	 * @param   mixed  $data      The data to be saved.
-	 *
-	 * @return bool Returns true if the data was successfully saved, false otherwise.
-	 */
-	public static function saveData($moduleId, $data)
-	{
-		$db    = Factory::getContainer()->get('DatabaseDriver');
-		$query = $db->getQuery(true)
-			->update($db->quoteName('#__modules'))
-			->set($db->quoteName('content') . ' = ' . $db->quote($data))
-			->where($db->quoteName('id') . ' = ' . (int) $moduleId);
-		$db->setQuery($query);
+    /**
+     * Saves the given data to the module with the specified ID in the database.
+     *
+     * @param int $moduleId The ID of the module to save the data to.
+     * @param mixed $data The data to be saved.
+     *
+     * @return bool Returns true if the data was successfully saved, false otherwise.
+     */
+    public static function saveData($moduleId, $data)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__modules'))
+            ->set($db->quoteName('content') . ' = ' . $db->quote($data))
+            ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
+        $db->setQuery($query);
 
         try {
             $result = $db->execute();
@@ -108,9 +102,9 @@ class AdminnotesHelper
         } catch (Exception $e) {
             Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }
 
 ?>

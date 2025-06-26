@@ -21,17 +21,17 @@ use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
  */
 class Dispatcher extends AbstractModuleDispatcher
 {
-	/**
-	 * Returns the layout data.
-	 *
-	 * @return  array
-	 *
-	 * @since   5.1.0
-	 */
-	protected function getLayoutData()
-	{
-		$data = parent::getLayoutData();
+    /**
+     * Returns the layout data.
+     *
+     * @return  array
+     *
+     * @since   5.1.0
+     */
+    protected function getLayoutData()
+    {
+        $data = parent::getLayoutData();
 
-		return $data;
-	}
+        return $data;
+    }
 }
