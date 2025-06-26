@@ -32,7 +32,7 @@ class Dispatcher extends AbstractModuleDispatcher
      *
      * @since   1.2.0
      */
-    protected function getLayoutData()
+    protected function getLayoutData(): array
     {
         $data = parent::getLayoutData();
 

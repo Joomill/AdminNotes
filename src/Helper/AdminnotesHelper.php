@@ -37,7 +37,7 @@ class AdminnotesHelper
      *
      * @return bool Returns true if the user can edit, false otherwise.
      */
-    public static function canEdit($params)
+    public static function canEdit(mixed $params): bool
     {
         try {
             $user = Factory::getApplication()->getIdentity();
@@ -84,7 +84,7 @@ class AdminnotesHelper
      *
      * @return string|null The content of the module, or null if no module with the given ID exists.
      */
-    public static function getData($moduleId)
+    public static function getData(int $moduleId)
     {
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -109,7 +109,7 @@ class AdminnotesHelper
      *
      * @return bool Returns true if the data was successfully saved, false otherwise.
      */
-    public static function saveData($moduleId, $data)
+    public static function saveData(int $moduleId, mixed $data): bool
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)

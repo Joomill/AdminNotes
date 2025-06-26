@@ -55,7 +55,7 @@ class Mod_AdminnotesInstallerScript
      * @throws  Exception
      * @since   1.2.0
      */
-    public function preflight($type, $parent): bool
+    public function preflight(string $type, InstallerAdapter $parent): bool
     {
         if ($type !== 'uninstall') {
             // Check for the minimum PHP version before continuing
@@ -94,7 +94,7 @@ class Mod_AdminnotesInstallerScript
      * @return  boolean  True on success
      * @since   1.2.0
      */
-    public function postflight($type, $parent)
+    public function postflight(string $type, InstallerAdapter $parent): bool
     {
         if ($type === 'install') {
             echo '<style>a[target="_blank"]::before {display: none};</style>';
@@ -145,7 +145,7 @@ class Mod_AdminnotesInstallerScript
      * @return  boolean  True on success
      * @since   1.2.0
      */
-    public function install($parent)
+    public function install(InstallerAdapter $parent): bool
     {
         // Enable the extension
         $this->enableModule();
