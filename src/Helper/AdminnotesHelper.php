@@ -94,9 +94,9 @@ class AdminnotesHelper
         try {
             $result = $db->execute();
 
-            // Clear the cache for com_modules
+            // Clear the cache for this module
             $cache = Factory::getContainer()->get(CacheControllerFactoryInterface::class)->createCacheController();
-            $cache->clean('com_modules');
+            $cache->clean('com_modules', 'module', $moduleId);
 
             return $result;
         } catch (Exception $e) {
