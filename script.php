@@ -127,55 +127,67 @@ class Mod_AdminnotesInstallerScript
         return true;
     }
 
+    /**
+     * Enables the module by publishing it and assigning it to the cpanel position
+     *
+     * @return void
+     */
     private function enableModule()
     {
-        // Check if Module has not been published yet
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'));
-        $query->from($db->quoteName('#__modules'));
-        $query->where($db->quoteName('module') . ' = ' . $db->quote('mod_adminnotes'));
-        $query->where($db->quoteName('published') . ' = 1');
-        $query->where($db->quoteName('position') . ' = ' . $db->quote('cpanel'));
-        $db->setQuery($query);
-        $moduleId = $db->loadResult();
-
-        // If the Module has not been published, publish + assign it
-
-        if (empty($moduleId)) {
-            // Change Module settings to auto publish it on position cpanel
-            $query = $db->getQuery(true);
-            $fields = array(
-                $db->quoteName('title') . ' = ' . $db->quote('Notes'),
-                $db->quoteName('published') . ' = 1',
-                $db->quoteName('position') . ' = ' . $db->quote('cpanel'),
-                $db->quoteName('access') . ' = 3',
-                $db->quoteName('params') . ' = ' .
-                $db->quote('{"edit_users":"","editor":"tinymce","forceEditor":"1","print":"1","download":"1","header_icon":"fa-regular fa-note-sticky","module_tag":"div","bootstrap_size":"0","header_tag":"h2","header_class":"","style":"0"}'),
-            );
-            $conditions = array($db->quoteName('module') . ' = ' . $db->quote('mod_adminnotes'));
-            $query->update($db->quoteName('#__modules'))->set($fields)->where($conditions);
-            $db->setQuery($query);
-            $db->execute();
-
-            // Get ID for module
+        try {
+            // Check if Module has not been published yet
+            $db = Factory::getContainer()->get('DatabaseDriver');
             $query = $db->getQuery(true);
             $query->select($db->quoteName('id'));
             $query->from($db->quoteName('#__modules'));
             $query->where($db->quoteName('module') . ' = ' . $db->quote('mod_adminnotes'));
+            $query->where($db->quoteName('published') . ' = 1');
+            $query->where($db->quoteName('position') . ' = ' . $db->quote('cpanel'));
             $db->setQuery($query);
             $moduleId = $db->loadResult();
 
-            // Add to modules_menu
-            $query = $db->getQuery(true);
-            $fields = array(
-                $db->quoteName('moduleid') . ' = ' . $db->quote($moduleId),
-                $db->quoteName('menuid') . ' = 0',
-            );
+            // If the Module has not been published, publish + assign it
+            if (empty($moduleId)) {
+                try {
+                    // Change Module settings to auto publish it on position cpanel
+                    $query = $db->getQuery(true);
+                    $fields = array(
+                        $db->quoteName('title') . ' = ' . $db->quote('Notes'),
+                        $db->quoteName('published') . ' = 1',
+                        $db->quoteName('position') . ' = ' . $db->quote('cpanel'),
+                        $db->quoteName('access') . ' = 3',
+                        $db->quoteName('params') . ' = ' .
+                        $db->quote('{"edit_users":"","editor":"tinymce","forceEditor":"1","print":"1","download":"1","header_icon":"fa-regular fa-note-sticky","module_tag":"div","bootstrap_size":"0","header_tag":"h2","header_class":"","style":"0"}'),
+                    );
+                    $conditions = array($db->quoteName('module') . ' = ' . $db->quote('mod_adminnotes'));
+                    $query->update($db->quoteName('#__modules'))->set($fields)->where($conditions);
+                    $db->setQuery($query);
+                    $db->execute();
 
-            $query->insert($db->quoteName('#__modules_menu'))->set($fields);
-            $db->setQuery($query);
-            $db->execute();
+                    // Get ID for module
+                    $query = $db->getQuery(true);
+                    $query->select($db->quoteName('id'));
+                    $query->from($db->quoteName('#__modules'));
+                    $query->where($db->quoteName('module') . ' = ' . $db->quote('mod_adminnotes'));
+                    $db->setQuery($query);
+                    $moduleId = $db->loadResult();
+
+                    // Add to modules_menu
+                    $query = $db->getQuery(true);
+                    $fields = array(
+                        $db->quoteName('moduleid') . ' = ' . $db->quote($moduleId),
+                        $db->quoteName('menuid') . ' = 0',
+                    );
+
+                    $query->insert($db->quoteName('#__modules_menu'))->set($fields);
+                    $db->setQuery($query);
+                    $db->execute();
+                } catch (Exception $e) {
+                    Log::add('Error publishing module: ' . $e->getMessage(), Log::ERROR, 'jerror');
+                }
+            }
+        } catch (Exception $e) {
+            Log::add('Error checking module status: ' . $e->getMessage(), Log::ERROR, 'jerror');
         }
     }
 }

@@ -21,39 +21,51 @@ use Exception;
 class AdminnotesHelper
 {
 
+    /**
+     * Checks if the current user has permission to edit the notes.
+     *
+     * @param mixed $params The module parameters.
+     *
+     * @return bool Returns true if the user can edit, false otherwise.
+     */
     public static function canEdit($params)
     {
-        $user = Factory::getApplication()->getIdentity();
-        $canEdit = false;
+        try {
+            $user = Factory::getApplication()->getIdentity();
+            $canEdit = false;
 
-        $params = new Registry($params);
-        $editUserGroups = $params->get('edit_user_groups', []);
-        $editUsers = $params->get('edit_users');
+            $params = new Registry($params);
+            $editUserGroups = $params->get('edit_user_groups', []);
+            $editUsers = $params->get('edit_users');
 
-        if ((!$editUserGroups) && (!$editUsers)) {
-            $canEdit = true;
-        }
+            if ((!$editUserGroups) && (!$editUsers)) {
+                $canEdit = true;
+            }
 
-        if (!is_array($editUserGroups)) {
-            $editUserGroups = array_filter(explode(',', $editUserGroups));
-        }
+            if (!is_array($editUserGroups)) {
+                $editUserGroups = array_filter(explode(',', $editUserGroups));
+            }
 
-        // Check if user is in allowed groups
-        if (!empty($editUserGroups)) {
-            foreach ($editUserGroups as $groupId) {
-                if (in_array((int)$groupId, $user->groups)) {
-                    $canEdit = true;
-                    break;
+            // Check if user is in allowed groups
+            if (!empty($editUserGroups)) {
+                foreach ($editUserGroups as $groupId) {
+                    if (in_array((int)$groupId, $user->groups)) {
+                        $canEdit = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        // Check if user is in allowed users
-        if ($user->id == $editUsers) {
-            $canEdit = true;
-        }
+            // Check if user is in allowed users
+            if ($user->id == $editUsers) {
+                $canEdit = true;
+            }
 
-        return $canEdit;
+            return $canEdit;
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
+            return false;
+        }
     }
 
     /**
@@ -65,14 +77,19 @@ class AdminnotesHelper
      */
     public static function getData($moduleId)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)
-            ->select($db->quoteName('content'))
-            ->from($db->quoteName('#__modules'))
-            ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
-        $db->setQuery($query);
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('content'))
+                ->from($db->quoteName('#__modules'))
+                ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
+            $db->setQuery($query);
 
-        return $db->loadResult();
+            return $db->loadResult();
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
+            return null;
+        }
     }
 
     /**
