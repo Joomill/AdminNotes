@@ -81,8 +81,8 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit)
 ?>
 
 <div id="adminnotes-module" class="m-3">
-	<?php if (($canEdit) && ($showEditor)) : ?>
-        <div id="printArea" style="display: none;"><?php echo $module->content; ?></div>
+    <?php if (($canEdit) && ($showEditor)) : ?>
+        <div id="printArea" style="display: none;"><?php echo htmlspecialchars_decode($module->content); ?></div>
         <form action="<?php echo $currentURL; ?>" method="post" id="AdminnotesForm">
 			<?php echo $editor->display('data', $module->content, '100%', '500', '60', '20', false, null, null); ?>
             <div class="buttons d-flex">
@@ -106,8 +106,8 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit)
 			<?php echo HTMLHelper::_('form.token'); ?>
             <input type="hidden" name="task" value="save">
         </form>
-	<?php else : ?>
-        <div id="printArea"><?php echo $module->content; ?></div>
+    <?php else : ?>
+        <div id="printArea"><?php echo htmlspecialchars_decode($module->content); ?></div>
 
         <div class="buttons d-flex">
             <div class="">
@@ -140,8 +140,8 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit)
 <script>
     function printContent() {
         var printWindow = window.open('', '', 'height=500,width=800');
-        printWindow.document.write('<html><head><title><?php echo $module->title; ?> - <?php echo $config->get('sitename');?> </title>');
-        printWindow.document.write('</head><body >');
+        printWindow.document.write('<html><head><title><?php echo addslashes($module->title); ?> - <?php echo addslashes($config->get('sitename'));?> </title>');
+        printWindow.document.write('</head><body>');
         printWindow.document.write(document.getElementById('printArea').innerHTML);
         printWindow.document.write('</body></html>');
         printWindow.document.close();
