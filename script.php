@@ -160,14 +160,23 @@ class Mod_AdminnotesInstallerScript
      * publishes it, and assigns it to the cpanel position in the administrator area.
      * It also sets appropriate access levels and parameters.
      *
+     * The process follows these steps:
+     * 1. Check if the module is already published in the cpanel position
+     * 2. If not published, update the module with default settings
+     * 3. Get the module ID for the menu assignment
+     * 4. Create a menu assignment record to make the module visible
+     *
      * @return  void
      * @since   1.2.0
      */
     private function enableModule()
     {
         try {
-            // Check if Module has not been published yet
+            // Get database connection from Joomla's dependency injection container
             $db = Factory::getContainer()->get('DatabaseDriver');
+
+            // First, check if the module has already been published to avoid duplicate configuration
+            // We look for a module with our module name that is already published in the cpanel position
             $query = $db->getQuery(true);
             $query->select($db->quoteName('id'));
             $query->from($db->quoteName('#__modules'));
@@ -177,10 +186,15 @@ class Mod_AdminnotesInstallerScript
             $db->setQuery($query);
             $moduleId = $db->loadResult();
 
-            // If the Module has not been published, publish + assign it
+            // If the Module has not been published yet, we need to configure and publish it
             if (empty($moduleId)) {
                 try {
-                    // Change Module settings to auto publish it on position cpanel
+                    // Update the module with default settings for optimal user experience
+                    // - Set a user-friendly title
+                    // - Publish it (set published=1)
+                    // - Position it in the cpanel (admin dashboard)
+                    // - Set access level 3 (Special - only admins and super users)
+                    // - Configure default parameters for editor, icons, etc.
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('title') . ' = ' . $db->quote('Notes'),
@@ -195,7 +209,8 @@ class Mod_AdminnotesInstallerScript
                     $db->setQuery($query);
                     $db->execute();
 
-                    // Get ID for module
+                    // Get the module ID after updating - we need this for the menu assignment
+                    // The module record was created during installation, but we need its ID
                     $query = $db->getQuery(true);
                     $query->select($db->quoteName('id'));
                     $query->from($db->quoteName('#__modules'));
@@ -203,7 +218,9 @@ class Mod_AdminnotesInstallerScript
                     $db->setQuery($query);
                     $moduleId = $db->loadResult();
 
-                    // Add to modules_menu
+                    // Add an entry to the modules_menu table to make the module visible
+                    // Setting menuid=0 makes the module appear on all pages
+                    // Without this step, the module would be configured but not visible anywhere
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('moduleid') . ' = ' . $db->quote($moduleId),
@@ -214,10 +231,14 @@ class Mod_AdminnotesInstallerScript
                     $db->setQuery($query);
                     $db->execute();
                 } catch (Exception $e) {
+                    // Log any errors that occur during the publishing process
+                    // This helps with troubleshooting installation issues
                     Log::add('Error publishing module: ' . $e->getMessage(), Log::ERROR, 'jerror');
                 }
             }
         } catch (Exception $e) {
+            // Log any errors that occur during the initial module status check
+            // This is a separate try-catch to distinguish between different types of errors
             Log::add('Error checking module status: ' . $e->getMessage(), Log::ERROR, 'jerror');
         }
     }
