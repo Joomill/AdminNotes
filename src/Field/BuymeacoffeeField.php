@@ -17,7 +17,11 @@ use Joomla\CMS\Form\FormField;
 /**
  * Buy Me a Coffee field for the Admin Notes module
  *
- * @since  1.2.0
+ * This field adds a "Buy Me a Coffee" button to the module's configuration page,
+ * allowing users to support the developer through donations.
+ *
+ * @package     Joomill\Module\Adminnotes\Administrator\Field
+ * @since       1.2.0
  */
 class BuymeacoffeeField extends FormField
 {

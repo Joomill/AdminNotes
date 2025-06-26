@@ -16,17 +16,21 @@ use Joomla\DI\ServiceProviderInterface;
 /**
  * The adminnotes module service provider.
  *
- * @since  5.1.0
+ * This service provider implements the ServiceProviderInterface to register
+ * the module's services with the DI container, including the module dispatcher factory.
+ *
+ * @package     Joomill\Module\Adminnotes
+ * @since       1.2.0
  */
 return new class () implements ServiceProviderInterface {
     /**
      * Registers the service provider with a DI container.
      *
-     * @param Container $container The DI container.
+     * @param   Container  $container  The DI container.
      *
      * @return  void
      *
-     * @since   5.1.0
+     * @since   1.2.0
      */
     public function register(Container $container)
     {

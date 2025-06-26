@@ -17,7 +17,11 @@ use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
 /**
  * Dispatcher class for mod_adminnotes
  *
- * @since  1.2.0
+ * This class handles the module's dispatching process, extending Joomla's
+ * AbstractModuleDispatcher to provide specific functionality for the Admin Notes module.
+ *
+ * @package     Joomill\Module\Adminnotes\Administrator\Dispatcher
+ * @since       1.2.0
  */
 class Dispatcher extends AbstractModuleDispatcher
 {

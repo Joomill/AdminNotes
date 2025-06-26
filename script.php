@@ -15,33 +15,45 @@ use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 
+/**
+ * Installation script for Admin Notes module
+ *
+ * This class handles the installation, update, and uninstallation processes
+ * for the Admin Notes module. It performs version checks, displays messages,
+ * and automatically enables and configures the module upon installation.
+ *
+ * @package     Joomill\Module\Adminnotes
+ * @since       1.2.0
+ */
 class Mod_AdminnotesInstallerScript
 {
     /**
      * Minimum Joomla version to check
      *
-     * @var    string
-     * @since  4.0.0
+     * @var     string
+     * @since   1.2.0
      */
     private $minimumJoomlaVersion = '4.0';
 
     /**
      * Minimum PHP version to check
      *
-     * @var    string
-     * @since  4.0.0
+     * @var     string
+     * @since   1.2.0
      */
     private $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
 
     /**
      * Function called before extension installation/update/removal procedure commences
      *
-     * @param string $type The type of change (install, update or discover_install, not uninstall)
-     * @param InstallerAdapter $parent The class calling this method
+     * Checks for minimum PHP and Joomla versions before allowing the installation to proceed.
+     *
+     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
+     * @param   InstallerAdapter  $parent  The class calling this method
      *
      * @return  boolean  True on success
-     * @throws Exception
-     * @since  4.0.0
+     * @throws  Exception
+     * @since   1.2.0
      */
     public function preflight($type, $parent): bool
     {
@@ -74,11 +86,13 @@ class Mod_AdminnotesInstallerScript
     /**
      * Function called after extension installation/update/removal procedure commences
      *
-     * @param string $type The type of change (install, update or discover_install, not uninstall)
-     * @param InstallerAdapter $parent The class calling this method
+     * Displays information and social media links after installation or uninstallation.
+     *
+     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
+     * @param   InstallerAdapter  $parent  The class calling this method
      *
      * @return  boolean  True on success
-     * @since  4.0.0
+     * @since   1.2.0
      */
     public function postflight($type, $parent)
     {
@@ -124,10 +138,12 @@ class Mod_AdminnotesInstallerScript
     /**
      * Function called during extension installation
      *
-     * @param InstallerAdapter $parent The class calling this method
+     * Enables the module by calling the enableModule method.
+     *
+     * @param   InstallerAdapter  $parent  The class calling this method
      *
      * @return  boolean  True on success
-     * @since  4.0.0
+     * @since   1.2.0
      */
     public function install($parent)
     {
@@ -140,7 +156,12 @@ class Mod_AdminnotesInstallerScript
     /**
      * Enables the module by publishing it and assigning it to the cpanel position
      *
-     * @return void
+     * This method automatically configures the module with default settings,
+     * publishes it, and assigns it to the cpanel position in the administrator area.
+     * It also sets appropriate access levels and parameters.
+     *
+     * @return  void
+     * @since   1.2.0
      */
     private function enableModule()
     {

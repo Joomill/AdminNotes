@@ -18,6 +18,15 @@ use Exception;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+/**
+ * Helper class for Admin Notes module
+ *
+ * This class provides utility methods for the Admin Notes module, including
+ * permission checking, data retrieval, and data saving functionality.
+ *
+ * @package     Joomill\Module\Adminnotes\Administrator\Helper
+ * @since       1.2.0
+ */
 class AdminnotesHelper
 {
 
