@@ -24,7 +24,7 @@
 
     <!-- Parameters -->
     <config>
-        <fields name="params">
+        <fields name="params" addfieldprefix="Joomill\Module\Adminnotes\Administrator\Field">
             <fieldset name="basic">
                 <field
                         name="edit_user_groups"
@@ -82,12 +82,16 @@
                     <option value="1">JYES</option>
                 </field>
             </fieldset>
-            <fieldset name="advanced">
+            <fieldset name="advanced" >
                 <field
                         name="header_icon"
                         type="text"
                         label="MOD_ADMINNOTES_HEADER_ICON"
                         default="fa-regular fa-note-sticky"
+                />
+                <field
+                        name="buymeacoffee"
+                        type="buymeacoffee"
                 />
             </fieldset>
         </fields>
