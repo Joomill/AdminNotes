@@ -6,7 +6,9 @@
  *  link: https://www.joomill-extensions.com
  */
 
-defined('_JEXEC') or die();
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerAdapter;
@@ -119,6 +121,14 @@ class Mod_AdminnotesInstallerScript
         return true;
     }
 
+    /**
+     * Function called during extension installation
+     *
+     * @param InstallerAdapter $parent The class calling this method
+     *
+     * @return  boolean  True on success
+     * @since  4.0.0
+     */
     public function install($parent)
     {
         // Enable the extension

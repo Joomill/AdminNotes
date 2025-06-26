@@ -21,26 +21,26 @@ use Joomla\CMS\Form\FormField;
  */
 class BuymeacoffeeField extends FormField
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var    string
-	 * @since  1.2.0
-	 */
-	protected $type = 'Buymeacoffee';
+    /**
+     * The form field type.
+     *
+     * @var    string
+     * @since  1.2.0
+     */
+    protected $type = 'Buymeacoffee';
 
-	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return  string  The field input markup.
-	 *
-	 * @since   1.2.0
-	 */
-	protected function getInput()
-	{
-		// Add the Buy Me a Coffee script
-		$html = '<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="joomill" data-description="Support me on Buy me a coffee!" data-message="Enjoying this free extension? Support future development with a coffee!" data-color="#FFDD00" data-position="Right" data-x_margin="18" data-y_margin="18"></script>';
+    /**
+     * Method to get the field input markup.
+     *
+     * @return  string  The field input markup.
+     *
+     * @since   1.2.0
+     */
+    protected function getInput()
+    {
+        // Add the Buy Me a Coffee script
+        $html = '<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="joomill" data-description="Support me on Buy me a coffee!" data-message="Enjoying this free extension? Support future development with a coffee!" data-color="#FFDD00" data-position="Right" data-x_margin="18" data-y_margin="18"></script>';
 
-		return $html;
-	}
+        return $html;
+    }
 }
