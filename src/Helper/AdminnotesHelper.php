@@ -8,6 +8,7 @@
 
 namespace Joomill\Module\Adminnotes\Administrator\Helper;
 
+use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
@@ -96,13 +97,16 @@ class AdminnotesHelper
 			->where($db->quoteName('id') . ' = ' . (int) $moduleId);
 		$db->setQuery($query);
 
-		try
-		{
-			return $db->execute();
-		}
-		catch (Exception $e)
-		{
-			Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
+        try {
+            $result = $db->execute();
+
+            // Clear the cache for com_modules
+            $cache = Factory::getContainer()->get(CacheControllerFactoryInterface::class)->createCacheController();
+            $cache->clean('com_modules');
+
+            return $result;
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
 
 			return false;
 		}
