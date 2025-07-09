@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="module" client="administrator" method="upgrade">
     <name>Joomill Admin Notes</name>
-    <creationDate>June 2025</creationDate>
+    <creationDate>July 2025</creationDate>
     <author>Jeroen Moolenschot | Joomill</author>
     <authorEmail>info@joomill-extensions.com</authorEmail>
     <authorUrl>https://www.joomill-extensions.com</authorUrl>
     <copyright>2025 Joomill Extensions</copyright>
     <license>GNU General Public License version 2 or later;</license>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <description></description>
     <namespace path="src">Joomill\Module\Adminnotes</namespace>
 
