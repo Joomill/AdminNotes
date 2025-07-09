@@ -166,17 +166,12 @@ class AdminnotesHelper
             return false;
         }
 
-        // Sanitize the data using Joomla's built-in filtering
-        // This prevents XSS attacks and ensures data integrity
-        $filter = new InputFilter();
-        $safeData = $filter->clean($data, 'html');
 
-        // Prepare the database query to update the module content
         // Using Joomla's query builder for proper escaping and security
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->update($db->quoteName('#__modules'))
-            ->set($db->quoteName('content') . ' = ' . $db->quote($safeData))
+            ->set($db->quoteName('content') . ' = ' . $db->quote($data))
             ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
         $db->setQuery($query);
 

@@ -92,11 +92,7 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) 
     if (!Session::checkToken('post')) {
         $app->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALIDTOKEN'), 'error');
     } else {
-        // Get the data and sanitize it
-        $filter = new InputFilter();
         $data = $input->post->get('data', '', 'raw');
-        // Apply filtering to the data
-        $data = $filter->clean($data, 'html');
 
         // Save the data
         if (AdminnotesHelper::saveData($moduleId, $data)) {
