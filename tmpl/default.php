@@ -19,7 +19,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 $app = Factory::getApplication();
-$input = $app->input;
+$input = $app->getInput();
 
 // In Joomla modules, $params should always be defined
 // If not, we'll create an empty Registry object to prevent errors
