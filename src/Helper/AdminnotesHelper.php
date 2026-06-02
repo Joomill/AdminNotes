@@ -8,10 +8,15 @@
 
 namespace Joomill\Module\Adminnotes\Administrator\Helper;
 
+use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\User;
+use Joomla\Database\DatabaseAwareInterface;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
 use Exception;
 
@@ -23,38 +28,70 @@ use Exception;
  * Helper class for Admin Notes module
  *
  * This class provides utility methods for the Admin Notes module, including
- * permission checking, data retrieval, and data saving functionality.
+ * permission checking, data retrieval, and data saving functionality. It is an
+ * instance class resolved through Joomla's HelperFactory: the application and
+ * module parameters are injected via the constructor and the database driver is
+ * injected through the DatabaseAwareInterface.
  *
  * @package     Joomill\Module\Adminnotes\Administrator\Helper
  * @since       1.2.0
  */
-class AdminnotesHelper
+class AdminnotesHelper implements DatabaseAwareInterface
 {
+    use DatabaseAwareTrait;
+
+    /**
+     * The application object.
+     *
+     * @var    CMSApplicationInterface
+     * @since  1.4.0
+     */
+    protected CMSApplicationInterface $app;
+
+    /**
+     * The module parameters.
+     *
+     * @var    Registry
+     * @since  1.4.0
+     */
+    protected Registry $params;
+
+    /**
+     * Helper class constructor.
+     *
+     * @param   array  $config  The layout data passed by the HelperFactory
+     *                          (contains at least 'app' and 'params').
+     *
+     * @since   1.4.0
+     */
+    public function __construct(array $config)
+    {
+        $this->app    = $config['app'];
+        $this->params = $config['params'] instanceof Registry
+            ? $config['params']
+            : new Registry($config['params'] ?? []);
+    }
 
     /**
      * Checks if the current user has permission to edit the notes.
      *
-     * @param mixed $params The module parameters.
+     * @param   User|null  $user  The user to check, or null for the current user.
      *
-     * @return bool Returns true if the user can edit, false otherwise.
+     * @return  bool  Returns true if the user can edit, false otherwise.
+     *
+     * @since   1.2.0
      */
-    public static function canEdit(mixed $params): bool
+    public function canEdit(?User $user = null): bool
     {
         try {
-            // Get the current user from the application
-            $user = Factory::getApplication()->getIdentity();
+            // Get the current user from the application when no user is supplied
+            $user    = $user ?: $this->app->getIdentity();
             $canEdit = false;
-
-            // Ensure we have a Registry object for parameter handling
-            // This is important because parameters might come in different formats
-            if (!($params instanceof Registry)) {
-                $params = new Registry($params);
-            }
 
             // Get the configured user groups and users who can edit
             // These are set in the module's configuration
-            $editUserGroups = $params->get('edit_user_groups', []);
-            $editUsers = $params->get('edit_users', '');
+            $editUserGroups = $this->params->get('edit_user_groups', []);
+            $editUsers      = $this->params->get('edit_users', '');
 
             // If no restrictions are set in the module configuration,
             // we allow editing for all users as a default behavior
@@ -72,7 +109,7 @@ class AdminnotesHelper
             // As soon as we find a match, we can grant edit permission
             if (!empty($editUserGroups) && !empty($user->groups)) {
                 foreach ($editUserGroups as $groupId) {
-                    if (in_array((int)$groupId, $user->groups)) {
+                    if (in_array((int) $groupId, $user->groups)) {
                         $canEdit = true;
                         break; // Exit the loop once we find a match
                     }
@@ -98,7 +135,7 @@ class AdminnotesHelper
 
             return $canEdit;
         } catch (Exception $e) {
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
             return false;
         }
     }
@@ -106,24 +143,27 @@ class AdminnotesHelper
     /**
      * Retrieves the content of a module from the database based on its ID.
      *
-     * @param int $moduleId The ID of the module to retrieve the content from.
+     * @param   int  $moduleId  The ID of the module to retrieve the content from.
      *
-     * @return string|null The content of the module, or null if no module with the given ID exists.
+     * @return  string|null  The content of the module, or null if no module with the given ID exists.
+     *
+     * @since   1.2.0
      */
-    public static function getData(int $moduleId)
+    public function getData(int $moduleId): ?string
     {
         // Input validation - ensure moduleId is a positive integer
-        if (!is_int($moduleId) || $moduleId <= 0) {
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALID_MODULE_ID'), 'error');
+        if ($moduleId <= 0) {
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALID_MODULE_ID'), 'error');
             return null;
         }
 
         try {
-            $db = Factory::getContainer()->get('DatabaseDriver');
+            $db    = $this->getDatabase();
             $query = $db->getQuery(true)
                 ->select($db->quoteName('content'))
                 ->from($db->quoteName('#__modules'))
-                ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':id', $moduleId, ParameterType::INTEGER);
             $db->setQuery($query);
 
             $content = $db->loadResult();
@@ -131,7 +171,7 @@ class AdminnotesHelper
             // Ensure we're returning a string or null
             return is_string($content) ? $content : null;
         } catch (Exception $e) {
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
             return null;
         }
     }
@@ -141,24 +181,26 @@ class AdminnotesHelper
      *
      * This method handles the entire save process including:
      * - Input validation
+     * - Server-side permission check
      * - Rate limiting to prevent abuse
-     * - Data sanitization
+     * - ACL-based content filtering
      * - Database update
      * - Cache clearing
      * - Error handling
      *
-     * @param int $moduleId The ID of the module to save the data to.
-     * @param mixed $data The data to be saved.
-     * @param mixed $params The module parameters, used to re-check edit permission server-side.
+     * @param   int    $moduleId  The ID of the module to save the data to.
+     * @param   mixed  $data      The data to be saved.
      *
-     * @return bool Returns true if the data was successfully saved, false otherwise.
+     * @return  bool  Returns true if the data was successfully saved, false otherwise.
+     *
+     * @since   1.2.0
      */
-    public static function saveData(int $moduleId, mixed $data, mixed $params = null): bool
+    public function saveData(int $moduleId, mixed $data): bool
     {
         // Input validation - ensure moduleId is a positive integer
         // This prevents SQL injection and invalid database operations
-        if (!is_int($moduleId) || $moduleId <= 0) {
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALID_MODULE_ID'), 'error');
+        if ($moduleId <= 0) {
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALID_MODULE_ID'), 'error');
             return false;
         }
 
@@ -166,15 +208,15 @@ class AdminnotesHelper
         // The view layer already hides the editor for users without edit rights,
         // but we must never rely on the view alone: re-verify here so the save
         // cannot be triggered by a crafted request.
-        if ($params !== null && !self::canEdit($params)) {
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_NOT_AUTHORISED'), 'error');
+        if (!$this->canEdit()) {
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_NOT_AUTHORISED'), 'error');
             return false;
         }
 
         // Rate limiting - check if the user has made too many save requests
         // This prevents abuse of the save functionality and potential DoS attacks
-        if (!self::checkRateLimit()) {
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_RATE_LIMIT_EXCEEDED'), 'error');
+        if (!$this->checkRateLimit()) {
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_RATE_LIMIT_EXCEEDED'), 'error');
             return false;
         }
 
@@ -183,18 +225,18 @@ class AdminnotesHelper
         // gets their input run through Joomla's InputFilter, which strips script,
         // iframe and other dangerous tags before the note is stored and later
         // rendered in the administrator back-end of every admin user.
-        $user = Factory::getApplication()->getIdentity();
-
-        if (!$user->authorise('core.admin')) {
+        if (!$this->app->getIdentity()->authorise('core.admin')) {
             $data = InputFilter::getInstance()->clean((string) $data, 'html');
         }
 
         // Using Joomla's query builder for proper escaping and security
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true)
             ->update($db->quoteName('#__modules'))
-            ->set($db->quoteName('content') . ' = ' . $db->quote($data))
-            ->where($db->quoteName('id') . ' = ' . (int)$moduleId);
+            ->set($db->quoteName('content') . ' = :content')
+            ->where($db->quoteName('id') . ' = :id')
+            ->bind(':content', $data)
+            ->bind(':id', $moduleId, ParameterType::INTEGER);
         $db->setQuery($query);
 
         try {
@@ -207,22 +249,21 @@ class AdminnotesHelper
             $cache->clean('com_modules', 'module', $moduleId);
 
             // Record successful save for rate limiting
-            // This helps track usage patterns and enforce rate limits
-            self::recordSaveAttempt(true);
+            $this->recordSaveAttempt();
 
             return $result;
         } catch (Exception $e) {
             // Log the error and display a user-friendly message
-            // The actual exception details are only shown to help with debugging
-            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
+            $this->app->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED') . ': ' . $e->getMessage(), 'error');
 
             // Record failed save for rate limiting
             // Failed attempts also count toward rate limits to prevent brute force attacks
-            self::recordSaveAttempt(false);
+            $this->recordSaveAttempt();
 
             return false;
         }
     }
+
     /**
      * Checks if the current user has exceeded the rate limit for save operations.
      *
@@ -230,17 +271,15 @@ class AdminnotesHelper
      * abuse of the save functionality. It tracks save attempts in the user's session
      * and limits the number of operations within a specific time window.
      *
-     * @return bool Returns true if the user has not exceeded the rate limit, false otherwise.
+     * @return  bool  Returns true if the user has not exceeded the rate limit, false otherwise.
+     *
+     * @since   1.2.0
      */
-    private static function checkRateLimit(): bool
+    private function checkRateLimit(): bool
     {
-        $app = Factory::getApplication();
-        $user = $app->getIdentity();
-        $userId = $user->id;
-
         // Get the session object to store rate limiting data
         // Using the session allows us to track attempts without database overhead
-        $session = $app->getSession();
+        $session = $this->app->getSession();
 
         // Get the save attempts from the session
         // This is an array of timestamps when save attempts were made
@@ -249,23 +288,18 @@ class AdminnotesHelper
         // Define rate limit parameters
         // These could be moved to configuration if needed for different environments
         $maxAttempts = 10; // Maximum number of attempts allowed in the time window
-        $timeWindow = 60;  // Time window in seconds (1 minute)
+        $timeWindow  = 60;  // Time window in seconds (1 minute)
 
         // Clean up old attempts that are outside the current time window
         // This implements a sliding window approach rather than a fixed window
-        $now = time();
-        $saveAttempts = array_filter($saveAttempts, function($attempt) use ($now, $timeWindow) {
+        $now          = time();
+        $saveAttempts = array_filter($saveAttempts, static function ($attempt) use ($now, $timeWindow) {
             return ($now - $attempt) < $timeWindow;
         });
 
         // Check if the user has exceeded the rate limit
         // If they've made too many attempts in the time window, deny the operation
-        if (count($saveAttempts) >= $maxAttempts) {
-            return false;
-        }
-
-        // User is within the rate limit, allow the operation
-        return true;
+        return count($saveAttempts) < $maxAttempts;
     }
 
     /**
@@ -275,15 +309,13 @@ class AdminnotesHelper
      * to record the attempt in the user's session. This data is then used by the
      * checkRateLimit() method to enforce rate limiting.
      *
-     * @param bool $success Whether the save attempt was successful.
-     *                      Currently not used, but could be used to implement
-     *                      different handling for successful vs. failed attempts.
-     * @return bool Always returns true
+     * @return  void
+     *
+     * @since   1.2.0
      */
-    private static function recordSaveAttempt(bool $success): bool
+    private function recordSaveAttempt(): void
     {
-        $app = Factory::getApplication();
-        $session = $app->getSession();
+        $session = $this->app->getSession();
 
         // Get the save attempts from the session
         // If this is the first attempt, an empty array will be returned
@@ -296,7 +328,5 @@ class AdminnotesHelper
         // Store the updated attempts in the session for future rate limit checks
         // This persists across page loads within the same session
         $session->set('adminnotes.save_attempts', $saveAttempts);
-
-        return true;
     }
 }

@@ -8,58 +8,21 @@
 
 defined('_JEXEC') or die;
 
-use Joomill\Module\Adminnotes\Administrator\Helper\AdminnotesHelper;
 use Joomla\CMS\Editor\Editor;
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
-$app = Factory::getApplication();
-$input = $app->getInput();
-
-// In Joomla modules, $params should always be defined
-// If not, we'll create an empty Registry object to prevent errors
-if (!isset($params) || !($params instanceof Registry)) {
-    $params = new Registry();
-}
-
-$forceEditor = $params->get('forceEditor', 0, 'INT');
-if ($forceEditor) {
-    $showEditor = 1;
-} else {
-    $showEditor = $input->get('edit', 0, 'INT');
-}
-
-// Get the current URL for form actions and redirects
-$currentURL = Uri::getInstance()->toString();
-
-// Determine the appropriate separator for URL parameters
-// If the URL already has parameters (contains a '?'), use '&' for additional parameters
-// Otherwise, use '?' to start the parameter string
-$separator = strpos($currentURL, '?') !== false ? '&' : '?';
-
-// Handle URL construction differently based on whether we're already in edit mode
-if (strpos($currentURL, 'edit=1') !== false) {
-    // We're in edit mode, so the save URL should be the current URL without the edit parameter
-    // This ensures we return to view mode after saving
-    $saveURL = str_replace(['edit=1&', 'edit=1'], '', $currentURL);
-
-    // Clean up any trailing characters that might be left after removing the parameter
-    $saveURL = rtrim($saveURL, '&');
-    $saveURL = rtrim($saveURL, '?');
-
-    // In edit mode, the edit URL is just the current URL (we're already editing)
-    $editURL = $currentURL;
-} else {
-    // We're in view mode, so the edit URL needs the edit parameter added
-    $editURL = $currentURL . $separator . 'edit=1';
-
-    // In view mode, the save URL is just the current URL (we'll return here after save)
-    $saveURL = $currentURL;
-}
+/**
+ * Layout variables provided by the dispatcher:
+ *
+ * @var \Joomla\CMS\Application\CMSApplicationInterface $app
+ * @var \stdClass                                       $module
+ * @var Registry                                        $params
+ * @var bool                                            $canEdit
+ */
 
 // Ensure $module is defined
 if (!isset($module)) {
@@ -73,35 +36,29 @@ if (!isset($module->id)) {
     return;
 }
 
-$moduleId = $module->id;
+$input = $app->getInput();
 
-// Get data to display in the form
-$data = AdminnotesHelper::getData($moduleId);
+// Decide whether to render the editor: either forced through the parameters,
+// or requested through the edit=1 URL parameter.
+$forceEditor = $params->get('forceEditor', 0, 'INT');
+$showEditor  = $forceEditor ? 1 : $input->get('edit', 0, 'INT');
 
-$params = new Registry($module->params);
-$canEdit = AdminnotesHelper::canEdit($params);
-$canPrint = $params->get('print', 0, 'INT');
+$canPrint    = $params->get('print', 0, 'INT');
 $canDownload = $params->get('download', 0, 'INT');
 
 $config = $app->getConfig();
 $editor = Editor::getInstance($params->get('editor', 'tinymce', 'STRING'));
 
-if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) {
-    // CSRF protection - validate the Joomla form token
-    if (!Session::checkToken('post')) {
-        $app->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALIDTOKEN'), 'error');
-    } else {
-        $data = $input->post->get('data', '', 'raw');
+// Build the URLs used by the edit button and the form action.
+$currentURL = Uri::getInstance()->toString();
+$separator  = strpos($currentURL, '?') !== false ? '&' : '?';
 
-        // Save the data (saveData re-checks edit permission and filters the content server-side)
-        if (AdminnotesHelper::saveData($moduleId, $data, $params)) {
-            $app->enqueueMessage(Text::_('MOD_ADMINNOTES_SAVED'), 'message');
-            // Use a safe redirect URL
-            Factory::getApplication()->redirect(htmlspecialchars($saveURL, ENT_QUOTES, 'UTF-8'));
-        } else {
-            $app->enqueueMessage(Text::_('MOD_ADMINNOTES_FAILED'), 'error');
-        }
-    }
+if (strpos($currentURL, 'edit=1') !== false) {
+    // Already in edit mode
+    $editURL = $currentURL;
+} else {
+    // View mode: the edit button needs the edit parameter added
+    $editURL = $currentURL . $separator . 'edit=1';
 }
 ?>
 
