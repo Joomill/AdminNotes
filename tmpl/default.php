@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomill\Module\Adminnotes\Administrator\Helper\AdminnotesHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
@@ -88,14 +87,14 @@ $config = $app->getConfig();
 $editor = Editor::getInstance($params->get('editor', 'tinymce', 'STRING'));
 
 if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) {
-    // Enhanced CSRF protection - check both the standard token and our custom nonce
+    // CSRF protection - validate the Joomla form token
     if (!Session::checkToken('post')) {
         $app->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALIDTOKEN'), 'error');
     } else {
         $data = $input->post->get('data', '', 'raw');
 
-        // Save the data
-        if (AdminnotesHelper::saveData($moduleId, $data)) {
+        // Save the data (saveData re-checks edit permission and filters the content server-side)
+        if (AdminnotesHelper::saveData($moduleId, $data, $params)) {
             $app->enqueueMessage(Text::_('MOD_ADMINNOTES_SAVED'), 'message');
             // Use a safe redirect URL
             Factory::getApplication()->redirect(htmlspecialchars($saveURL, ENT_QUOTES, 'UTF-8'));
@@ -131,8 +130,6 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) 
             </div>
             <?php echo HTMLHelper::_('form.token'); ?>
             <input type="hidden" name="task" value="save">
-            <!-- Add a nonce for additional CSRF protection -->
-            <input type="hidden" name="<?php echo Session::getFormToken(); ?>" value="1">
         </form>
     <?php else : ?>
         <div id="printArea"><?php echo HTMLHelper::_('content.prepare', $module->content); ?></div>

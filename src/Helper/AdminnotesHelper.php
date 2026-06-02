@@ -88,9 +88,11 @@ class AdminnotesHelper
                 }
             }
 
-            // Super Users (members of group 8) always have access regardless of settings
-            // This is a security measure to ensure admins can't lock themselves out
-            if (in_array(8, $user->groups)) {
+            // Super Users always have access regardless of settings
+            // This is a security measure to ensure admins can't lock themselves out.
+            // Use the ACL (core.admin) instead of a hardcoded group id, because a site
+            // can have any number of Super User groups with arbitrary ids.
+            if ($user->authorise('core.admin')) {
                 $canEdit = true;
             }
 
@@ -147,15 +149,25 @@ class AdminnotesHelper
      *
      * @param int $moduleId The ID of the module to save the data to.
      * @param mixed $data The data to be saved.
+     * @param mixed $params The module parameters, used to re-check edit permission server-side.
      *
      * @return bool Returns true if the data was successfully saved, false otherwise.
      */
-    public static function saveData(int $moduleId, mixed $data): bool
+    public static function saveData(int $moduleId, mixed $data, mixed $params = null): bool
     {
         // Input validation - ensure moduleId is a positive integer
         // This prevents SQL injection and invalid database operations
         if (!is_int($moduleId) || $moduleId <= 0) {
             Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_INVALID_MODULE_ID'), 'error');
+            return false;
+        }
+
+        // Server-side permission check (defense in depth)
+        // The view layer already hides the editor for users without edit rights,
+        // but we must never rely on the view alone: re-verify here so the save
+        // cannot be triggered by a crafted request.
+        if ($params !== null && !self::canEdit($params)) {
+            Factory::getApplication()->enqueueMessage(Text::_('MOD_ADMINNOTES_NOT_AUTHORISED'), 'error');
             return false;
         }
 
@@ -166,6 +178,16 @@ class AdminnotesHelper
             return false;
         }
 
+        // ACL-based content filtering to prevent stored XSS.
+        // Super Users (core.admin) are trusted to store raw HTML. Everyone else
+        // gets their input run through Joomla's InputFilter, which strips script,
+        // iframe and other dangerous tags before the note is stored and later
+        // rendered in the administrator back-end of every admin user.
+        $user = Factory::getApplication()->getIdentity();
+
+        if (!$user->authorise('core.admin')) {
+            $data = InputFilter::getInstance()->clean((string) $data, 'html');
+        }
 
         // Using Joomla's query builder for proper escaping and security
         $db = Factory::getContainer()->get('DatabaseDriver');
