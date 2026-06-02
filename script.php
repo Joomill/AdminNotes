@@ -33,7 +33,7 @@ class Mod_AdminnotesInstallerScript
      * @var     string
      * @since   1.2.0
      */
-    private $minimumJoomlaVersion = '4.0';
+    private string $minimumJoomlaVersion = '5.0';
 
     /**
      * Minimum PHP version to check
@@ -41,7 +41,7 @@ class Mod_AdminnotesInstallerScript
      * @var     string
      * @since   1.2.0
      */
-    private $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
+    private string $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
 
     /**
      * Function called before extension installation/update/removal procedure commences
