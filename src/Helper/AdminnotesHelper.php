@@ -1,8 +1,8 @@
 <?php
 /*
- *  package: Admin Notes
- *  copyright: Copyright (c) 2025. Jeroen Moolenschot | Joomill
- *  license: GNU General Public License version 2 or later
+ *  package: Joomill Admin Notes
+ *  copyright: Copyright (c) 2026. Jeroen Moolenschot | Joomill
+ *  license: GNU General Public License version 3 or later
  *  link: https://www.joomill-extensions.com
  */
 
@@ -136,7 +136,7 @@ class AdminnotesHelper
 
     /**
      * Saves the given data to the module with the specified ID in the database.
-     * 
+     *
      * This method handles the entire save process including:
      * - Input validation
      * - Rate limiting to prevent abuse
@@ -203,7 +203,7 @@ class AdminnotesHelper
     }
     /**
      * Checks if the current user has exceeded the rate limit for save operations.
-     * 
+     *
      * This method implements a sliding window rate limiting algorithm to prevent
      * abuse of the save functionality. It tracks save attempts in the user's session
      * and limits the number of operations within a specific time window.
@@ -248,7 +248,7 @@ class AdminnotesHelper
 
     /**
      * Records a save attempt for rate limiting purposes.
-     * 
+     *
      * This method is called after each save operation (both successful and failed)
      * to record the attempt in the user's session. This data is then used by the
      * checkRateLimit() method to enforce rate limiting.

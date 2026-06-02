@@ -1,8 +1,8 @@
 <?php
 /*
- *  package: Admin Notes
- *  copyright: Copyright (c) 2025. Jeroen Moolenschot | Joomill
- *  license: GNU General Public License version 2 or later
+ *  package: Joomill Admin Notes
+ *  copyright: Copyright (c) 2026. Jeroen Moolenschot | Joomill
+ *  license: GNU General Public License version 3 or later
  *  link: https://www.joomill-extensions.com
  */
 

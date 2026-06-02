@@ -1,8 +1,8 @@
 <?php
 /*
- *  package: Admin Notes
- *  copyright: Copyright (c) 2025. Jeroen Moolenschot | Joomill
- *  license: GNU General Public License version 2 or later
+ *  package: Joomill Admin Notes
+ *  copyright: Copyright (c) 2026. Jeroen Moolenschot | Joomill
+ *  license: GNU General Public License version 3 or later
  *  link: https://www.joomill-extensions.com
  */
 
@@ -169,12 +169,12 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) 
 <script>
     /**
      * Prints the content of the notes in a new window
-     * 
+     *
      * This function:
      * 1. Opens a new browser window for printing
      * 2. Creates a properly formatted document with the note content
      * 3. Triggers the browser's print dialog
-     * 
+     *
      * Security measures:
      * - Uses JSON encoding and htmlspecialchars for title and sitename
      * - Creates a new DOM element to safely handle content
@@ -210,12 +210,12 @@ if ($input->getMethod() == 'POST' && $input->get('task') == 'save' && $canEdit) 
 
     /**
      * Downloads the content of the notes as a plain text file
-     * 
+     *
      * This function:
      * 1. Extracts the text content (without HTML) from the notes
      * 2. Creates a downloadable file using the Blob API
      * 3. Triggers the download using a temporary anchor element
-     * 
+     *
      * Security measures:
      * - Uses innerText to strip HTML tags
      * - Creates a proper MIME type for the file
