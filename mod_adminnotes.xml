@@ -89,10 +89,6 @@
                         label="MOD_ADMINNOTES_HEADER_ICON"
                         default="fa-regular fa-note-sticky"
                 />
-                <field
-                        name="buymeacoffee"
-                        type="buymeacoffee"
-                />
             </fieldset>
         </fields>
     </config>
