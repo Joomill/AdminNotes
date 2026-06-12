@@ -5,7 +5,7 @@
     <author>Jeroen Moolenschot | Joomill</author>
     <authorEmail>info@joomill-extensions.com</authorEmail>
     <authorUrl>https://www.joomill-extensions.com</authorUrl>
-    <license>GNU General Public License version 2 or later</license>
+    <license>GNU General Public License version 3 or later</license>
     <creationDate>June 2026</creationDate>
     <copyright>(C) 2026 Joomill Extensions</copyright>
     <version>1.5.0</version>
@@ -81,6 +81,13 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
+                <field
+                        name="notereview"
+                        type="note"
+                        label="MOD_ADMINNOTES_REVIEW_LABEL"
+                        description="MOD_ADMINNOTES_REVIEW_DESC"
+                        class="alert alert-success"
+                />
             </fieldset>
             <fieldset name="advanced" >
                 <field

@@ -6,151 +6,230 @@
  *  link: https://www.joomill-extensions.com
  */
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
+// No direct access.
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerAdapter;
+use Joomla\CMS\Installer\InstallerScriptInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 
 /**
- * Installation script for Admin Notes module
+ * Installation script class for Admin Notes module
  *
- * This class handles the installation, update, and uninstallation processes
- * for the Admin Notes module. It performs version checks, displays messages,
- * and automatically enables and configures the module upon installation.
- *
- * @package     Joomill\Module\Adminnotes
- * @since       1.2.0
+ * @since  1.2.0
  */
-class Mod_AdminnotesInstallerScript
+class mod_adminnotesInstallerScript implements InstallerScriptInterface
 {
     /**
      * Minimum Joomla version to check
      *
-     * @var     string
-     * @since   1.2.0
+     * @var    string
+     * @since  1.2.0
      */
-    private string $minimumJoomlaVersion = '5.0';
+    private $minimumJoomlaVersion = '5.0';
 
     /**
      * Minimum PHP version to check
      *
-     * @var     string
-     * @since   1.2.0
+     * @var    string
+     * @since  1.2.0
      */
-    private string $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
+    private $minimumPHPVersion = JOOMLA_MINIMUM_PHP;
+
+    /**
+     * Function called after the extension is installed
+     *
+     * @param   InstallerAdapter  $adapter  The adapter calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since   1.5.0
+     */
+    public function install(InstallerAdapter $adapter): bool
+    {
+        return true;
+    }
+
+    /**
+     * Function called after the extension is updated
+     *
+     * @param   InstallerAdapter  $adapter  The adapter calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since   1.5.0
+     */
+    public function update(InstallerAdapter $adapter): bool
+    {
+        return true;
+    }
+
+    /**
+     * Function called after the extension is uninstalled
+     *
+     * @param   InstallerAdapter  $adapter  The adapter calling this method
+     *
+     * @return  boolean  True on success
+     *
+     * @since   1.5.0
+     */
+    public function uninstall(InstallerAdapter $adapter): bool
+    {
+        return true;
+    }
 
     /**
      * Function called before extension installation/update/removal procedure commences
      *
-     * Checks for minimum PHP and Joomla versions before allowing the installation to proceed.
-     *
-     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param   string            $type    The type of change (install, update, discover_install or uninstall)
+     * @param   InstallerAdapter  $parent  The adapter calling this method
      *
      * @return  boolean  True on success
-     * @throws  Exception
+     *
      * @since   1.2.0
      */
     public function preflight(string $type, InstallerAdapter $parent): bool
     {
-        if ($type !== 'uninstall') {
-            // Check for the minimum PHP version before continuing
-            if (!empty($this->minimumPHPVersion) && version_compare(PHP_VERSION, $this->minimumPHPVersion, '<')) {
-                Log::add(
-                    Text::sprintf('JLIB_INSTALLER_MINIMUM_PHP', $this->minimumPHPVersion),
-                    Log::WARNING,
-                    'jerror'
-                );
-
-                return false;
+        try {
+            if ($type !== 'uninstall') {
+                // Check for the minimum PHP version before continuing
+                if (!empty($this->minimumPHPVersion) && version_compare(PHP_VERSION, $this->minimumPHPVersion, '<')) {
+                    Log::add(
+                        Text::sprintf('JLIB_INSTALLER_MINIMUM_PHP', $this->minimumPHPVersion),
+                        Log::WARNING,
+                        'jerror'
+                    );
+                    return false;
+                }
+                // Check for the minimum Joomla version before continuing
+                if (!empty($this->minimumJoomlaVersion) && version_compare(JVERSION, $this->minimumJoomlaVersion, '<')) {
+                    Log::add(
+                        Text::sprintf('JLIB_INSTALLER_MINIMUM_JOOMLA', $this->minimumJoomlaVersion),
+                        Log::WARNING,
+                        'jerror'
+                    );
+                    return false;
+                }
             }
-            // Check for the minimum Joomla version before continuing
-            if (!empty($this->minimumJoomlaVersion) && version_compare(JVERSION, $this->minimumJoomlaVersion, '<')) {
-                Log::add(
-                    Text::sprintf('JLIB_INSTALLER_MINIMUM_JOOMLA', $this->minimumJoomlaVersion),
-                    Log::WARNING,
-                    'jerror'
-                );
-
-                return false;
-            }
+            return true;
+        } catch (\Exception $e) {
+            Log::add('Error during preflight check: ' . $e->getMessage(), Log::ERROR, 'adminnotes');
+            return false;
         }
-
-        return true;
     }
 
     /**
      * Function called after extension installation/update/removal procedure commences
      *
-     * Displays information and social media links after installation or uninstallation.
-     *
-     * @param   string            $type    The type of change (install, update or discover_install, not uninstall)
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @param   string            $type    The type of change (install, update, discover_install or uninstall)
+     * @param   InstallerAdapter  $parent  The adapter calling this method
      *
      * @return  boolean  True on success
+     *
      * @since   1.2.0
      */
     public function postflight(string $type, InstallerAdapter $parent): bool
     {
-        if ($type === 'install') {
-            echo '<style>a[target="_blank"]::before {display: none};</style>';
-            echo '<div class="mb-3 text-center"><img src="https://www.joomill.nl/images/logo_joomill.png" alt="Joomill Logo" /></div>';
-            echo '<div class="mb-3 text-center"><strong>' . Text::_('MOD_ADMINNOTES_XML_DESCRIPTION') . '</strong></div>';
-            echo '<hr>';
-            echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_INSTALL_FOLLOWME') . ':</div>';
-            echo '<div class="text-center">';
-            echo '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>';
-            echo '<a class="m-2" href="https://www.facebook.com/Joomill" target="_blank"><i class="fa-brands fa-facebook-f"> </i></a>';
-            echo '<a class="m-2" href="https://www.instagram.com/Joomill" target="_blank"><i class="fa-brands fa-instagram"> </i></a>';
-            echo '<a class="m-2" href="https://bsky.app/profile/joomill.bsky.social" target="_blank"><i class="fa-brands fa-bluesky"> </i></a>';
-            echo '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"></i></a>';
-            echo '<a class="m-2" href="https://www.threads.net/@joomill" target="_blank"><i class="fa-brands fa-threads"></i></a>';
-            echo '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-brands fa-x-twitter"> </i></a>';
-            echo '<a class="m-2" href="https://community.joomla.org/service-providers-directory/listings/67:joomill.html" target="_blank"><i class="fa-brands fa-joomla"> </i></a>';
-            echo '</div>';
-        }
-        if ($type === 'uninstall') {
-            echo '<style>a[target="_blank"]::before {display: none};</style>';
-            echo '<div class="mb-3 text-center"><img src="https://www.joomill.nl/images/logo_joomill.png" alt="Joomill Logo" /></div>';
-            echo '<br>';
-            echo '<h3 class="text-center">' . Text::_('MOD_ADMINNOTES_UNINSTALL_THANKYOU') . '</h3>';
-            echo '<br>';
-            echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_INSTALL_FOLLOWME') . ':</div>';
-            echo '<div class="text-center">';
-            echo '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>';
-            echo '<a class="m-2" href="https://www.facebook.com/Joomill" target="_blank"><i class="fa-brands fa-facebook-f"> </i></a>';
-            echo '<a class="m-2" href="https://www.instagram.com/Joomill" target="_blank"><i class="fa-brands fa-instagram"> </i></a>';
-            echo '<a class="m-2" href="https://bsky.app/profile/joomill.bsky.social" target="_blank"><i class="fa-brands fa-bluesky"> </i></a>';
-            echo '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"></i></a>';
-            echo '<a class="m-2" href="https://www.threads.net/@joomill" target="_blank"><i class="fa-brands fa-threads"></i></a>';
-            echo '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-brands fa-x-twitter"> </i></a>';
-            echo '<a class="m-2" href="https://community.joomla.org/service-providers-directory/listings/67:joomill.html" target="_blank"><i class="fa-brands fa-joomla"> </i></a>';
-            echo '</div>';
-        }
+        try {
+            $this->loadInstallLanguage();
 
-        return true;
+            if ($type === 'install') {
+                $this->enableModule();
+                $this->printInstallMessage();
+            }
+
+            if ($type === 'uninstall') {
+                $this->printUninstallMessage();
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            Log::add('Error during postflight: ' . $e->getMessage(), Log::ERROR, 'adminnotes');
+            // Still return true to not block the installation/uninstallation process
+            // The error is logged but we don't want to prevent the process from completing
+            return true;
+        }
     }
 
     /**
-     * Function called during extension installation
+     * Make the module install strings available to the script
      *
-     * Enables the module by calling the enableModule method.
+     * The installer normally auto-loads the .sys.ini; this is a safety net so the
+     * install and uninstall screens never show raw language keys.
      *
-     * @param   InstallerAdapter  $parent  The class calling this method
+     * @return  void
      *
-     * @return  boolean  True on success
-     * @since   1.2.0
+     * @since   1.5.0
      */
-    public function install(InstallerAdapter $parent): bool
+    private function loadInstallLanguage(): void
     {
-        // Enable the extension
-        $this->enableModule();
+        $language = Factory::getApplication()->getLanguage();
+        $language->load('mod_adminnotes.sys', JPATH_ADMINISTRATOR)
+            || $language->load('mod_adminnotes.sys', JPATH_ADMINISTRATOR . '/modules/mod_adminnotes');
+    }
 
-        return true;
+    /**
+     * Render the Joomill thank-you and quickstart screen after installation
+     *
+     * @return  void
+     *
+     * @since   1.5.0
+     */
+    private function printInstallMessage(): void
+    {
+        echo '<style>a[target="_blank"]::before {display: none;}</style>';
+        echo '<div class="mb-3 text-center"><img src="https://www.joomill-extensions.com/images/joomill-logo.png" alt="Joomill Extensions" /></div>';
+        echo '<div class="mb-3 text-center">' . Text::_('MOD_ADMINNOTES_THANKYOU') . '</div>';
+        echo '<br>';
+        echo '<h3>' . Text::_('MOD_ADMINNOTES_INSTALL_QUICKSTART') . ':</h3>';
+        echo '<ul>';
+        echo '<li><a style="text-decoration: underline;" href="index.php?option=com_modules&view=modules&filter[client_id]=1&filter[module]=mod_adminnotes" target="_blank">' . Text::_('MOD_ADMINNOTES_INSTALL_CONFIGURATION') . '</a></li>';
+        echo '<li><a style="text-decoration: underline;" href="https://www.joomill-extensions.com/extensions/admin-notes" target="_blank">' . Text::_('MOD_ADMINNOTES_INSTALL_NEEDHELP') . '</a></li>';
+        echo '</ul>';
+        echo '<hr>';
+        echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_FOLLOWME') . ':</div>';
+        echo $this->socialIcons();
+    }
+
+    /**
+     * Render the Joomill thank-you screen after uninstallation
+     *
+     * @return  void
+     *
+     * @since   1.5.0
+     */
+    private function printUninstallMessage(): void
+    {
+        echo '<style>a[target="_blank"]::before {display: none;}</style>';
+        echo '<div class="mb-3 text-center"><img src="https://www.joomill-extensions.com/images/joomill-logo.png" alt="Joomill Extensions" /></div>';
+        echo '<br>';
+        echo '<h3 class="text-center">' . Text::_('MOD_ADMINNOTES_THANKYOU') . '</h3>';
+        echo '<br>';
+        echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_FOLLOWME') . ':</div>';
+        echo $this->socialIcons();
+    }
+
+    /**
+     * Render the Joomill social media follow links
+     *
+     * @return  string  The social links HTML
+     *
+     * @since   1.5.0
+     */
+    private function socialIcons(): string
+    {
+        return '<div class="text-center">'
+            . '<a class="m-2" href="https://www.linkedin.com/in/jeroenmoolenschot/" target="_blank"><i class="fa-brands fa-linkedin"> </i></a>'
+            . '<a class="m-2" href="https://www.facebook.com/Joomill" target="_blank"><i class="fa-brands fa-facebook-f"> </i></a>'
+            . '<a class="m-2" href="https://www.instagram.com/Joomill" target="_blank"><i class="fa-brands fa-instagram"> </i></a>'
+            . '<a class="m-2" href="https://bsky.app/profile/joomill.bsky.social" target="_blank"><i class="fa-brands fa-bluesky"> </i></a>'
+            . '<a class="m-2" href="https://joomla.social/@joomill" target="_blank"><i class="fa-brands fa-mastodon"> </i></a>'
+            . '<a class="m-2" href="https://www.threads.net/@joomill" target="_blank"><i class="fa-brands fa-threads"> </i></a>'
+            . '<a class="m-2" href="https://www.twitter.com/Joomill" target="_blank"><i class="fa-brands fa-x-twitter"> </i></a>'
+            . '<a class="m-2" href="https://community.joomla.org/service-providers-directory/listings/67:joomill.html" target="_blank"><i class="fa-brands fa-joomla"> </i></a>'
+            . '</div>';
     }
 
     /**
@@ -230,16 +309,18 @@ class Mod_AdminnotesInstallerScript
                     $query->insert($db->quoteName('#__modules_menu'))->set($fields);
                     $db->setQuery($query);
                     $db->execute();
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // Log any errors that occur during the publishing process
                     // This helps with troubleshooting installation issues
-                    Log::add('Error publishing module: ' . $e->getMessage(), Log::ERROR, 'jerror');
+                    Log::add('Error publishing module: ' . $e->getMessage(), Log::ERROR, 'adminnotes');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Log any errors that occur during the initial module status check
             // This is a separate try-catch to distinguish between different types of errors
-            Log::add('Error checking module status: ' . $e->getMessage(), Log::ERROR, 'jerror');
+            Log::add('Error checking module status: ' . $e->getMessage(), Log::ERROR, 'adminnotes');
         }
     }
 }
+
+return new mod_adminnotesInstallerScript();
