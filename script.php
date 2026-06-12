@@ -186,7 +186,7 @@ class mod_adminnotesInstallerScript implements InstallerScriptInterface
         echo '<h3>' . Text::_('MOD_ADMINNOTES_INSTALL_QUICKSTART') . ':</h3>';
         echo '<ul>';
         echo '<li><a style="text-decoration: underline;" href="index.php?option=com_modules&view=modules&filter[client_id]=1&filter[module]=mod_adminnotes" target="_blank">' . Text::_('MOD_ADMINNOTES_INSTALL_CONFIGURATION') . '</a></li>';
-        echo '<li><a style="text-decoration: underline;" href="https://www.joomill-extensions.com/extensions/admin-notes" target="_blank">' . Text::_('MOD_ADMINNOTES_INSTALL_NEEDHELP') . '</a></li>';
+        echo '<li><a style="text-decoration: underline;" href="https://www.joomill-extensions.com/documentation/admin-notes-module" target="_blank">' . Text::_('MOD_ADMINNOTES_INSTALL_NEEDHELP') . '</a></li>';
         echo '</ul>';
         echo '<hr>';
         echo '<div class="text-center">' . Text::_('MOD_ADMINNOTES_FOLLOWME') . ':</div>';
