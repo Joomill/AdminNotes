@@ -60,6 +60,12 @@ if (strpos($currentURL, 'edit=1') !== false) {
     // View mode: the edit button needs the edit parameter added
     $editURL = $currentURL . $separator . 'edit=1';
 }
+
+$wa = $app->getDocument()->getWebAssetManager();
+
+if ($params->get('custom_css')) {
+    $wa->addInlineStyle($params->get('custom_css'));
+}
 ?>
 
 <div id="adminnotes-module" class="m-3">

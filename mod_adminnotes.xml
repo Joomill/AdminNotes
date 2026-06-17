@@ -96,6 +96,16 @@
                         label="MOD_ADMINNOTES_HEADER_ICON"
                         default="fa-regular fa-note-sticky"
                 />
+                <field
+                        type="editor"
+                        name="custom_css"
+                        label="MOD_ADMINNOTES_CUSTOM_CSS_LABEL"
+                        default=""
+                        rows="10"
+                        buttons="no"
+                        editor="codemirror|none"
+                        filter="raw"
+                />
             </fieldset>
         </fields>
     </config>
